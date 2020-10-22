@@ -2,24 +2,27 @@
 ## pseudoBulk.R
 ## total column number smaller than 20 will be considered bulk
 ############################
-require(BiocParallel)
-#source("common/condensGene.R")
 
-pseudoPure <- function(accIDs,sN,cellMap,seqD,gCover=0.6,condensF=F,strPreGeneFile=NULL){
+pseudoPure <- function(accIDs,sN,cellMap,seqD,gCover=0.6){
+  
+  if(is.null(names(accIDs))) names(accIDs) <- gsub("\\.rds","",basename(accIDs))
+  res <- bplapply(accIDs,onePure,sN,cellMap,seqD)
+  
+  ## filtering genes not common accross datasets for each cell types
+  resType <- sapply(names(res),function(x)return(unique(sapply(strsplit(colnames(res[[x]]),"\\|"),head,1))))
+  resGenes <- sapply(names(res),function(x)return(rownames(res[[x]])))
+  gNames <- sapply(unique(unlist(resType)),function(one){
+    ix <- sapply(resType,function(x)return(one%in%x))
+    gC <- table(unlist(resGenes[ix]))/sum(ix)
+    return(names(gC)[gC>gCover])
+  })
+  gNames <- unique(unlist(gNames))
+  message("gName in pseudoPure:",length(gNames))
+  
   bulk <- c()
   genes <- list()
-  res <- bplapply(accIDs,onePure,sN,cellMap,seqD,condensF)
-  ## merge pseudo bulk require genes be reported by certain percentage of data sets
-  #return(res[sapply(res,length)>0])
-  gNames <- table(unlist(sapply(res,rownames)))/length(res)
-  gNames <- names(gNames)[gNames>gCover]
-  #strF <- "Data/subNeuron.common.gene.rds"
-  if(!is.null(strPreGeneFile)&&file.exists(strPreGeneFile)){
-    gNames <- gNames[gNames%in%readRDS(strF)]
-  }
-  cat("gName in pseudoPure:",length(gNames),"\n")
   for(i in names(accIDs)){
-    cat(i,"in pseudoPure\n")
+    message(i,"in pseudoPure\n\treads ratio after removing the genes not detected in ")
     genes[[i]] <- rownames(res[[i]])
     totalReads <- apply(res[[i]],2,sum)
     res[[i]] <- res[[i]][rownames(res[[i]])%in%gNames,]
@@ -36,7 +39,7 @@ pseudoPure <- function(accIDs,sN,cellMap,seqD,gCover=0.6,condensF=F,strPreGeneFi
   return(list(express=bulk,geneL=genes))
 }
 
-pseudoLogCPM <- function(X,normDep=1e6,grp=NULL,cutoffCPM=8,cutoffRatio=0.2){
+pseudoLogCPM <- function(X,normDep=1e6,grp=NULL,cutoffCPM=8,cutoffRatio=0.6){
   ## normalized to gene length 
   #X <- apply(X,2,function(x,gLen){return(x/gLen)},as.numeric(sapply(strsplit(rownames(X),"\\|"),tail,1)))
   ####
@@ -44,7 +47,7 @@ pseudoLogCPM <- function(X,normDep=1e6,grp=NULL,cutoffCPM=8,cutoffRatio=0.2){
   cName <- sapply(strsplit(colnames(CPM),"\\|"),head,1)
   selGene <- rep(F,nrow(CPM))
   for(i in unique(cName)){
-    selGene <- selGene | apply(CPM[,cName==i],1,function(x){return(sum(x<cutoffCPM)/length(x))})<cutoffRatio
+    selGene <- selGene | apply(CPM[,cName==i],1,function(x){return(sum(x>cutoffCPM)/length(x))})>cutoffRatio
   }
   fLogCPM <- log2(1+CPM[selGene,])
   pheno <- data.frame(row.names=colnames(fLogCPM),
@@ -62,7 +65,7 @@ pseudoMix <- function(accIDs,sN,cellMap,seqDep,condensF=F){
   return(res)
 }
 
-onePure <-function(dID,sampleN,cellMap,seqD=2e6,recondense=F){
+onePure <-function(dID,sampleN,cellMap,seqD=2e6){
   strData <- dID#paste("Data/",dID,".rds",sep="")
   dID <- gsub("\\.rds","",basename(dID))
   if(!file.exists(strData)){
@@ -71,12 +74,10 @@ onePure <-function(dID,sampleN,cellMap,seqD=2e6,recondense=F){
   }
   cat("Starting",strData,"\n")
   X <- readRDS(strData)
-  if(recondense&&as.Date(file.mtime(strData),"%Y-%m-%d")<Sys.Date()){
-    X <- condensGene(readRDS(strData))
-    saveRDS(X,file=strData)
-  }
+
   bulk <- c()
   cType <- sapply(strsplit(colnames(X),"\\|"),head,1)
+  if(is.null(cellMap)) cellMap <- setNames(unique(cType),unique(cType))
   ix <- cType %in% names(cellMap)
   cType[ix] <- cellMap[cType[ix]]
   for(j in intersect(unique(cellMap),unique(cType))){
@@ -127,7 +128,7 @@ extCellIndex <- function(nCell,cType){
   ## ----
   return(ix)
 }
-oneMix <- function(dID,sampleN,cellMap,seqD=2e6,recondense=F){
+oneMix <- function(dID,sampleN,cellMap,seqD=2e6){
   strData <- dID#paste("Data/",dID,".rds",sep="")
   dID <- gsub("\\.rds","",basename(dID))
   if(!file.exists(strData)){
@@ -137,10 +138,6 @@ oneMix <- function(dID,sampleN,cellMap,seqD=2e6,recondense=F){
   selType <- names(cellMap)
   cat("Starting extracting mixture from",dID,"\n")
   X <- readRDS(strData)
-  if(recondense&&as.Date(file.mtime(strData),"%Y-%m-%d")<Sys.Date()){
-    X <- condensGene(readRDS(strData))
-    saveRDS(X,file=strData)
-  }
   
   selIndex <- sapply(strsplit(colnames(X),"\\|"),head,1)%in%selType
   if(sum(selIndex)<10) return(NULL)

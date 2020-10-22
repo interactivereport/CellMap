@@ -5,10 +5,6 @@
 ## batch: the column name in pheno indicates the batch
 ## pheno: a data frame whose row number is the same as column number of CPM, columns are interested phenotype information
 #############
-if(!require(sva,quietly=T, warn.conflicts=F)){
-  install.packages("sva",repos="https://cloud.r-project.org/")
-  if(!require(sva,quietly=T, warn.conflicts=F)) stop("sva cannot be installed!")
-}
 
 batchRM <- function(CPM,batch,pheno,additional=NULL,method="combat",core=8){
   if(sum(colnames(pheno)%in%batch)!=1){

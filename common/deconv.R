@@ -2,21 +2,7 @@
 ## deconv.R
 ##
 ##########################
-loadNNLS <- function(){
-  if(!require(nnls)){
-    install.packages("nnls",repos="https://cloud.r-project.org/")
-    if(!require(nnls)) stop("Cannot install nnls!")
-  }
-  if(!require(BiocParallel)){
-    install.packages("BiocParallel",repos="https://cloud.r-project.org/")
-    if(!require(BiocParallel)) stop("Cannot install BiocParallel!")
-  }
-  if(!require(edgeR)){
-    install.packages("edgeR",repos="https://cloud.r-project.org/")
-    if(!require(edgeR)) stop("Cannot install edgeR!")
-  }
-}
-suppressWarnings(suppressMessages(loadNNLS()))
+
 deconv <- function(bulk,feature,perm=100,batch=NULL,rmCellType=NULL,modelForm='log2',
                         TMM=F,FullG=F,debug=F){#c("Astrocytes","Endothelial","Macrophage","Neuron","Oligodendrocytes")
   if(!is.null(rmCellType)){
@@ -25,13 +11,6 @@ deconv <- function(bulk,feature,perm=100,batch=NULL,rmCellType=NULL,modelForm='l
   }
   features <- feature$expr
   DEG <- feature$selG[order(names(feature$selG))]
-  ## select the top diff genes
-  if(F){
-    for(i in names(DEG)){
-      diffE <- apply(features[,grepl(i,colnames(features))],1,min)-apply(features[,!grepl(i,colnames(features))],1,max)
-      DEG[[i]] <- rownames(features)[order(diffE,decreasing=T)][1:min(10,sum(diffE>=0))]
-    }
-  }
   
   selG <- unique(unlist(DEG))
   selSets <- feature$sets

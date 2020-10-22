@@ -10,7 +10,7 @@ loadComdensGene <- function(){
 }
 suppressWarnings(suppressMessages(loadComdensGene()))
 
-condensGene <- function(X,ensemblV=86){
+condensGene <- function(X,fun=max,ensemblV=97){
   X[is.na(X)] <- 0
   ## obtain the gene definition information from biomaRt
   attrib <- c("ensembl_gene_id","hgnc_id","entrezgene_id","entrezgene","hgnc_symbol","transcript_length","chromosome_name")
@@ -61,8 +61,8 @@ condensGene <- function(X,ensemblV=86){
   for(i in unique(gName[duplicated(gName)])){
     #cat("\t",i,"\n")
     ix <- gName == i
-    if(ncol(X)==1) X[ix,1][1] <- max(X[ix,])
-    else X[ix,][1,] <- apply(X[ix,],2,max)
+    if(ncol(X)==1) X[ix,1][1] <- fun(X[ix,])
+    else X[ix,][1,] <- apply(X[ix,],2,fun)
   }
   X <- X[!duplicated(gName),,drop=F]
   rownames(X) <- gName[!duplicated(gName)]

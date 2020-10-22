@@ -1,0 +1,2 @@
+GSE104276	Data/GSE104276.rds	Microglia=Microglia;Astrocytes=Astrocytes;Oligodendrocytes=Oligodendrocytes;Excitatory=Neuron;Inhibitory=Neuron
+GSE103723	Data/GSE103723.rds	Neuron=Neuron;Astrocytes=Astrocytes;Oligodendrocytes=Oligodendrocytes;Macrophage=Microglia
