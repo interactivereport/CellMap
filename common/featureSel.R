@@ -3,6 +3,7 @@
 ##
 #############
 featureSel <- function(X,grp,method="voom",batch=NULL,para,strPrefix=NULL,candiG=NULL){
+  saveRDS(X,file="log/cellmapOne.rds")
   cat("Finding features from",nrow(X),"for",length(unique(grp)),"groups by",method,"\n")
   print(table(grp))
   if(!is.null(batch))print(table(batch))
@@ -26,7 +27,7 @@ featureSel <- function(X,grp,method="voom",batch=NULL,para,strPrefix=NULL,candiG
       for(j in unique(as.character(grp))){
         if(i==j) next
         res <- as.data.frame(results(dds,c("cType",i,j)))
-        oneF <- rownames(res)[!is.na(res$padj)&res$padj<para$DEGqvalcut&res$log2FoldChange>para$logFCcut&res$baseMean>para$DEGbasemeancut]#&selG
+        oneF <- rownames(res)[!is.na(res$padj) & res$padj<para$DEGqvalcut & res$log2FoldChange>para$DEGlogFCcut & res$baseMean>para$DEGbasemeancut]#&selG
         g <- intersect(rownames(one),oneF)
         one <- setNames(cbind(one[g,,drop=F],res[g,"log2FoldChange"]),c(colnames(one),j))
         cat("\tAfter intersect with",j,"DEG:",length(g),"\n")

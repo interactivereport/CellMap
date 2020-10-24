@@ -31,7 +31,7 @@ initProfile <- function(para){
                          cutoffCPM=para$geneCutoffCPM,
                          cutoffRatio=para$geneCutoffDetectionRatio)
   ratio <- apply(resPure$express[rownames(resCPM$logCPM),],2,sum)/apply(resPure$express,2,sum)
-  message("\n\nfiltering samples whose CPM remove more than ",(1-para$geneCutoffDetectionRatio)*100,"%")
+  message("\n\nfiltering samples whose CPM removal is more than ",(1-para$geneCutoffDetectionRatio)*100,"%")
   print(ratio[ratio<para$geneCutoffDetectionRatio])
   selID <- names(ratio)[ratio>para$geneCutoffDetectionRatio]
   resPure$express <- resPure$express[rownames(resCPM$logCPM),selID]
@@ -39,19 +39,19 @@ initProfile <- function(para){
   resCPM$pheno <- resCPM$pheno[selID,]
   
   ## remove the batch effects ---------
-  if(para$rmBatch=="Full"){
+  if(para$batchMethod=="Full"){
     cat("create Profile: removing the batch effects\n")
     rmBatchD <- batchRM(resCPM$logCPM,"cData",resCPM$pheno,para$addBatchInfo)
-  }else if(para$rmBatch=="None"){
+  }else if(para$batchMethod=="None"){
     rmBatchD <- resCPM$logCPM
-  }else if(para$rmBatch=="Partial"){
+  }else if(para$batchMethod=="Partial"){
     cat("create Profile: removing the batch effects for some cell types\n")
     rmBatchD <- batchRM(resCPM$logCPM,"cData",resCPM$pheno,para$addBatchInfo)
     
     dcPair <- table(resCPM$pheno[!duplicated(resCPM$pheno),"cData"])
     selX <- resCPM$pheno$cData %in% names(dcPair)[dcPair==1]
     rmBatchD[,selX] <- resCPM$logCPM[,selX]
-  }else if(para$rmBatch=="Separate"){
+  }else if(para$batchMethod=="Separate"){
     cat("create Profile: removing the batch effects for each cell type separately\n")
     rmBatchD <- resCPM$logCPM
     for(i in unique(resCPM$pheno$cType)){
@@ -60,7 +60,7 @@ initProfile <- function(para){
       rmBatchD[,ix] <- batchRM(resCPM$logCPM[,ix],"cData",resCPM$pheno[ix,])
     }
   }else{
-    stop("UNKNOWN model type:",para$rmBatch,"!\n")
+    stop("UNKNOWN model type:",para$batchMethod,"!\n")
   }
   ## Obtain the feature selection----
   cat("create Profile: Obtaining the feature selection\n")

@@ -4,13 +4,12 @@
 ###############################
 source("common/deconv.R")
 source("common/condensGene.R")
-#source("common/plotComposition.R")
-#source("common/sampleSel.R")
 
 evalProfile <- function(fProfile,para){
   ## deconvolution and plot-----
   cat("eval Profile: deconvolution ... \n")
-  bulk <- condensGene(read.table(para$strBulk,header=T,sep="\t",check.names=F,as.is=T,row.names = 1))
+  bulk <- condensGene(read.table(para$strBulk,header=T,sep="\t",check.names=F,as.is=T,row.names = 1),
+                      para$geneNameReady,ensemblV=para$ensemblV,ensemblPath=para$ensemblPath)
   Res <- deconv(bulk,fProfile,modelForm=para$modelForm)
   ## evaluation by correlation for each sample and plotting---------
   cat("eval Profile: evaluation ... \n")

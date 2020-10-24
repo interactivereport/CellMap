@@ -3,17 +3,6 @@
 ##
 ## comp and pV [cell type,sample index]
 ##############################
-loadPlotComposition <- function(){
-  if(!require(reshape2,quietly=T, warn.conflicts=F)){
-    install.packages("reshape2",repos="https://cloud.r-project.org/")
-    if(!require(reshape2)) stop("Cannot install package reshape2!")
-  }
-  if(!require(ggplot2,quietly=T, warn.conflicts=F)){
-    install.packages("ggplot2",repos="https://cloud.r-project.org/")
-    if(!require(ggplot2)) stop("Cannot install package ggplot2!")
-  }
-}
-suppressWarnings(suppressMessages(loadPlotComposition()))
 
 plotComposition <- function(comp,cellCol,pV=NULL,
                             alpha=c("8F","BF","DF","FF"),

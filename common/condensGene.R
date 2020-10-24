@@ -2,28 +2,20 @@
 ## condensGene.R
 ## mapping to Ensembl_gene_id, hgnc_id (HGNC:...), EntrezGene_id to HGNC_SYMBOL 
 ####################
-loadComdensGene <- function(){
-  if(!require(biomaRt)){
-    BiocManager::install("biomaRt")
-    if(!require(biomaRt)) stop("Cannot install biomaRt!")
-  }
-}
-suppressWarnings(suppressMessages(loadComdensGene()))
 
-condensGene <- function(X,fun=max,ensemblV=97){
+condensGene <- function(X,gReady=F,fun=max,ensemblV=97,ensemblPath=NULL){
   X[is.na(X)] <- 0
+  if(gReady) return(X)
   ## obtain the gene definition information from biomaRt
   attrib <- c("ensembl_gene_id","hgnc_id","entrezgene_id","entrezgene","hgnc_symbol","transcript_length","chromosome_name")
-  if(exists("exePath")){
-    strF <- paste(exePath,"/Data/ensembl.v",ensemblV,".rds",sep="")
+  if(!is.null(ensemblPath)){
+    strF <- paste(ensemblPath,"/ensembl.v",ensemblV,".rds",sep="")
     if(file.exists(strF)){
       geneSym <- readRDS(strF)
     }else{
       ensembl <- useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", version=ensemblV)
       attrib <- attrib[attrib%in%listAttributes(ensembl)[,1]]
       geneSym <- getBM(attrib,mart = ensembl)#,"transcript_length"
-      #geneSym[,2] <- gsub("HGNC:","",geneSym[,2])
-      #geneSym <- geneSym[order(geneSym[,4],decreasing=T),]
       if(!dir.exists(dirname(strF))) dir.create(dirname(strF))
       saveRDS(geneSym,file=strF)
     }
@@ -31,8 +23,6 @@ condensGene <- function(X,fun=max,ensemblV=97){
     ensembl <- useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", version=ensemblV)
     attrib <- attrib[attrib%in%listAttributes(ensembl)[,1]]
     geneSym <- getBM(attrib,mart = ensembl)#,"transcript_length"
-    #geneSym[,2] <- gsub("HGNC:","",geneSym[,2])
-    #geneSym <- geneSym[order(geneSym[,4],decreasing=T),]
   }
 
   ## obtain the gene definition in the matrix -------

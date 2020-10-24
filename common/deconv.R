@@ -4,7 +4,7 @@
 ##########################
 
 deconv <- function(bulk,feature,perm=100,batch=NULL,rmCellType=NULL,modelForm='log2',
-                        TMM=F,FullG=F,debug=F){#c("Astrocytes","Endothelial","Macrophage","Neuron","Oligodendrocytes")
+                        TMM=F,FullG=F){#c("Astrocytes","Endothelial","Macrophage","Neuron","Oligodendrocytes")
   if(!is.null(rmCellType)){
     feature$sets <- feature$sets[,!sapply(strsplit(feature$sets[1,],"\\|"),head,1)%in%rmCellType]
     feature$selG <- feature$selG[!names(feature$selG)%in%rmCellType]
@@ -79,13 +79,6 @@ deconv <- function(bulk,feature,perm=100,batch=NULL,rmCellType=NULL,modelForm='l
     rm(X)
   }
   profileDist <- NULL
-  #save(features,cellCol,DEG,file="Training/test.rdata")
-  if(!is.null(cellCol)&&debug){
-    source("common/plotProfileDist.R")
-    for(i in names(DEG)) DEG[[i]] <- intersect(DEG[[i]],rownames(features))
-    plotBulkFeature(bulk,features,cellCol,DEG)
-    #profileDist <- plotProfileDist(features,cellCol,DEG)
-  }
   ## deconvolution ------
   cName <- sapply(strsplit(selSets[1,],"\\|"),head,1)
   FullProp <- bplapply(data.frame(bulk,check.names=F),function(x){

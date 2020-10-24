@@ -9,9 +9,9 @@ pseudoPure <- function(accIDs,sN,cellMap,seqD,gCover=0.6){
   res <- bplapply(accIDs,onePure,sN,cellMap,seqD)
   
   ## filtering genes not common accross datasets for each cell types
-  resType <- sapply(names(res),function(x)return(unique(sapply(strsplit(colnames(res[[x]]),"\\|"),head,1))))
-  resGenes <- sapply(names(res),function(x)return(rownames(res[[x]])))
-  gNames <- sapply(unique(unlist(resType)),function(one){
+  resType <- lapply(names(res),function(x)return(unique(sapply(strsplit(colnames(res[[x]]),"\\|"),head,1))))
+  resGenes <- lapply(names(res),function(x)return(rownames(res[[x]])))
+  gNames <- lapply(unique(unlist(resType)),function(one){
     ix <- sapply(resType,function(x)return(one%in%x))
     gC <- table(unlist(resGenes[ix]))/sum(ix)
     return(names(gC)[gC>gCover])
@@ -22,7 +22,7 @@ pseudoPure <- function(accIDs,sN,cellMap,seqD,gCover=0.6){
   bulk <- c()
   genes <- list()
   for(i in names(accIDs)){
-    message(i,"in pseudoPure\n\treads ratio after removing the genes not detected in ")
+    message(i," in pseudoPure\n\treads ratio after removing the genes not detected in ")
     genes[[i]] <- rownames(res[[i]])
     totalReads <- apply(res[[i]],2,sum)
     res[[i]] <- res[[i]][rownames(res[[i]])%in%gNames,]
@@ -58,9 +58,9 @@ pseudoLogCPM <- function(X,normDep=1e6,grp=NULL,cutoffCPM=8,cutoffRatio=0.6){
 }
 
 #names of cellMap is the ones in the data, the value is the one used for doconvolution
-pseudoMix <- function(accIDs,sN,cellMap,seqDep,condensF=F){ 
+pseudoMix <- function(accIDs,sN,cellMap,seqDep){ 
   mixR <- bulk <- list()
-  res <- bplapply(accIDs,oneMix,sN,cellMap,seqDep,condensF)
+  res <- bplapply(accIDs,oneMix,sN,cellMap,seqDep)
   res[sapply(res,is.null)] <- NULL
   return(res)
 }

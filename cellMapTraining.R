@@ -9,8 +9,9 @@ loadCellMapTraining <- function(){
   require(colorspace)
   require(sva)
   require(edgeR)
-  require(DESeq2)
+  require(DESeq2)#BiocManager::install("DESeq2")
   require(nnls)
+  require(biomaRt)#BiocManager::install("biomaRt")
 
   #if(!require(ggpubr)||!require(BiocParallel)||!require(optparse)) stop("missing packages!")
   source("common/createProfile.R")
@@ -18,6 +19,7 @@ loadCellMapTraining <- function(){
   source("common/evalProfile.R")
   source("common/updateProfile.R")
   source("common/plotCorProfile.R")
+  source("common/evalCellMap.R")
 }
 cellMapTraining <- function(strData,
                             strPrefix,
@@ -43,6 +45,9 @@ cellMapTraining <- function(strData,
                             
                             strBulk = "", # the expression of real bulk samples with known cell type composition (separated by "\t"), first column is the gene names, first row is the sample names
                             strRate = "", # the composition of bulk samples (separated by "\t"), first column is the cell type names, first row is the sample names matching with bulk expression
+                            geneNameReady=F,
+                            ensemblPath="Data/",
+                            ensemblV=97,
                             rmseCutoff = 0.1, # remove the profile combination by RMSE performance
                             tailR = 0.8, # the ratio of profile sets for each sample to be remove in real Bulk evaluation
                             maxRMrate=0.75, ## maxinum ratio of total profile sets can be removed from real bulk evaluation
@@ -50,16 +55,23 @@ cellMapTraining <- function(strData,
                             maxIteration = 10, #max iteration for the full training
                             core=2
                             ){
+  eval(strData)
+  eval(strPrefix)
   suppressMessages(suppressWarnings(loadCellMapTraining()))
   version <- "v1.0.5"
-  para <- sapply(as.list(match.call())[-1],eval)
+  
+  para <- sapply(formals()[c(-1,-2)],eval)
+  newP <- sapply(as.list(match.call())[-1],eval)
+  for(i in names(newP)) para[[i]] <- newP[[i]]
   register(MulticoreParam(para$core))
   para$trainD <- para$strData
+  para$version <- version
   
   if(is.null(cellTypeMap)) message("The cell type name mapping is not provided, ALL cell type names from data file will be used directly!")
   para$trainMap <- para$cellMap <- cellTypeMap
   iter <- 0
   bestProfile <- allProfile <- NULL
+  strRDS <- paste0(strPrefix,"_CellMapProfile.",version,".rds")
   while(iter<para$maxIteration){
     iter <- iter + 1
 
@@ -67,7 +79,7 @@ cellMapTraining <- function(strData,
     D <- initProfile(para)
     colnames(D$expr) <- paste(colnames(D$expr),"|iter",iter,sep="")
     cType <- unique(sapply(strsplit(colnames(D$expr),"\\|"),head,1))
-    if(is.null(para$cellMap)) para$cellMap <- setNames(cType,cType)
+    if(is.null(para$trainMap)) para$trainMap <- para$cellMap <- setNames(cType,cType)
     if(is.null(para$cellCol)){
       if(length(cType)<10){
         para$cellCol <- setNames(RColorBrewer::brewer.pal(length(cType),'Set1'),cType)
@@ -97,7 +109,6 @@ cellMapTraining <- function(strData,
     rm(allProfile)
     para <- bestProfile$para
     ## save the profile
-    strRDS <- paste0(strPrefix,"_CellMapProfile.",version,".rds")
     pdf(gsub("rds$","pdf",strRDS))
     a <- plotCorProfile(bestProfile,modelForm=para$modelForm)
     a <- dev.off()
@@ -106,6 +117,9 @@ cellMapTraining <- function(strData,
     cat("Finished iteration",iter,"\n\n\n\n\n")
     if(length(para$cellMap)<1) break
   }
+  pdf(gsub("rds$","evaluation.pdf",strRDS))
+  evalCellMap(bestProfile)
+  a <- dev.off()
     
 }
 

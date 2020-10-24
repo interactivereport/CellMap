@@ -9,7 +9,7 @@ sampleSel <- function(Mix,features,para){
   mixR <- Mix$mixR
   rm(Mix)
   ## training ---------
-  traRes <- deconv(mixBulk,features,perm=para$iteration,modelForm=para$modelForm)
+  traRes <- deconv(mixBulk,features,perm=para$setN,modelForm=para$modelForm)
   compos <- traRes$rawComp
   selSets <- traRes$rawSets
   #saveRDS(list(preCom=compos,expCom=mixR),file=paste(para$strfix,"rds",sep="."))

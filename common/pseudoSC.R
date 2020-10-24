@@ -38,21 +38,27 @@ oneBulk <-function(strData,seqD=1e6,sampleN=10){
   for(j in unique(cType)){
     iPOS <- grep(paste("^",j,"$",sep=""),cType)
     if(sum(X[,iPOS])<seqD) next
-    cat("\tworking on",j,sum(cType==j),"\n")
+    cat("\nworking on",j,sum(cType==j),"\t")
     ix <- rep(0,length(iPOS))
     one <- c()
+    if(sum(X[iPOS])*2<seqD){
+      message("Too few cells!")
+      next
+    }
     for(k in 1:sampleN){
       ix <- sample(iPOS,length(ix),replace=T)
       while(sum(X[,ix])>10*seqD && length(ix)>0.5*length(iPOS))
         ix <- sample(iPOS,length(ix)-ceiling(length(iPOS)/20),replace=T)
       while(sum(X[,ix])<seqD && length(ix)<2*length(iPOS))
         ix <- sample(iPOS,length(ix)+ceiling(length(iPOS)/10),replace=T)
+      cat(length(ix),";",sep="")
       one <- cbind(one,apply(X[,ix],1,sum))
     }
     colnames(one) <- paste(j,1:sampleN,sep="|")
     bulk <- cbind(bulk,one)
   }
   rm(X)
+  message("")
   ## remove MT genes and Ribosomal genes and miRNA----
   bulk <- bulk[!grepl("^MT|^RP|^MIR",rownames(bulk)),]
   ## ------
