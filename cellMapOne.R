@@ -49,7 +49,7 @@ cellMapOne <- function(strBulk,
   ## obtain the sc/sn Data ------
   oriSC <- strSC
   if(!file.exists(strSC)){
-    strSC <- paste("Data/",strSC,".rds",sep="")
+    strSC <- paste("profile/",strSC,".rds",sep="")
     if(!file.exists(strSC)) stop(paste0(oriSC," cannot be found!"))
   }
   scID <- gsub("\\.rds","",basename(strSC))

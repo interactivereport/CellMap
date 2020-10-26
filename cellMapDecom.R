@@ -30,6 +30,11 @@ cellMapDecom <- function(strBulk,
   eval(strProfile)
   suppressMessages(suppressWarnings(loadCellMapDecom()))
 
+  oriSC <- strProfile
+  if(!file.exists(strProfile)){
+    strProfile <- paste("profile/",strProfile,".rds",sep="")
+    if(!file.exists(strProfile)) stop(paste0(oriSC," cannot be found!"))
+  }
   profile <- readRDS(strProfile)
   X <- condensGene(read.table(strBulk,header=T,sep="\t",check.names=F,as.is=T,row.names=1),geneNameReady,ensemblV=ensemblV,ensemblPath=ensemblPath)
   
