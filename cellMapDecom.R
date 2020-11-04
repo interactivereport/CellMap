@@ -25,6 +25,7 @@ cellMapDecom <- function(strBulk,
                          ensemblPath="Data/",
                          ensemblV=97,
                          bReturn=F,
+                         pCutoff=0.05,
                          core=2){
   eval(strBulk)
   eval(strProfile)
@@ -47,7 +48,7 @@ cellMapDecom <- function(strBulk,
   
   pdf(strF,width=5+round(ncol(X)/3))
   plotComposition(cellComp$composition,
-                  profile$para$cellCol,pV=cellComp$compoP,
+                  profile$para$cellCol,pV=cellComp$compoP,cutoff.p=pCutoff,
                   ggplotFun=ggtitle(paste0("CellMap(",profile$para$version,") feature coverage:",cellComp$coverR,"%")))
   tmp <- dev.off()
 
