@@ -13,7 +13,7 @@ opls[[length(opls)+1]] <- make_option(c('--outPrefix','-o'), action="store", typ
 opls[[length(opls)+1]] <- make_option(c('--delCT','-d'), action="store", type="character", dest="delCT", default=NULL, 
                                       help="a string of removal cell type names separated by ';'.")
 opls[[length(opls)+1]] <- make_option(c('--sigCutoff','-s'), action="store", type="numeric", dest="sigCutoff", default=0.05, 
-                                      help="a string of removal cell type names separated by ';'.")
+                                      help="The significance cutoff to call a cell type [default: %default].")
 opls[[length(opls)+1]] <- make_option(c('--thread','-t'), action="store", type="numeric", dest="core", default=2,
                                       help="The number of cores to be used [default: %default]")
 
