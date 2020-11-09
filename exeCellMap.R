@@ -11,9 +11,9 @@ opls[[length(opls)+1]] <- make_option(c('--feature','-f'), action="store", type=
 opls[[length(opls)+1]] <- make_option(c('--outPrefix','-o'), action="store", type="character", dest="outPrefix", default=NULL, 
                                       help="The file prefix including path to the output files.")
 opls[[length(opls)+1]] <- make_option(c('--delCT','-d'), action="store", type="character", dest="delCT", default=NULL, 
-                                      help="a string of removal cell type names separated by ';'.")
+                                      help="a string of removal cell type names separated by ','.")
 opls[[length(opls)+1]] <- make_option(c('--cellCol','-c'), action="store", type="character", dest="cellCol", default=NULL, 
-                                      help="a string of cell color names separated by ';'.")
+                                      help="a string of cell color names separated by ','.")
 opls[[length(opls)+1]] <- make_option(c('--sigCutoff','-s'), action="store", type="numeric", dest="sigCutoff", default=0.05, 
                                       help="The significance cutoff to call a cell type [default: %default].")
 opls[[length(opls)+1]] <- make_option(c('--thread','-t'), action="store", type="numeric", dest="core", default=2,
@@ -43,14 +43,13 @@ source("cellMapDecom.R")
 strPrefix <- substr(args$strBulk,1,nchar(args$strBulk)-4)
 if(!is.null(args$outPrefix)) strPrefix <- args$outPrefix
 delCT <- NULL
-if(!is.null(args$delCT) && nchar(args$delCT)>3) delCT <- trimws(unlist(strsplit(args$delCT,";")))
+if(!is.null(args$delCT) && nchar(args$delCT)>3) delCT <- trimws(unlist(strsplit(args$delCT,",")))
 cellCol <- NULL
 if(!is.null(args$cellCol) && nchar(args$cellCol)>3){
-  tmp <- trimws(unlist(strsplit(args$cellCol,";")))
+  tmp <- trimws(unlist(strsplit(args$cellCol,",")))
   cellCol <- setNames(sapply(strsplit(tmp,"="),tail,1),
                       sapply(strsplit(tmp,"="),head,1))
 }
-print(cellCol)
-q()
+
 cellMapDecom(args$strBulk,args$strProfile,strPrefix,delCT,ensemblPath="Data/",pCutoff=args$sigCutoff,cellCol=cellCol)
 
