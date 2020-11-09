@@ -21,6 +21,7 @@ cellMapDecom <- function(strBulk,
                          strProfile,
                          strPrefix=substr(strBulk,1,nchar(strBulk)-4),
                          delCT=NULL,
+                         cellCol=NULL,
                          geneNameReady=F,
                          ensemblPath="Data/",
                          ensemblV=97,
@@ -37,7 +38,9 @@ cellMapDecom <- function(strBulk,
     if(!file.exists(strProfile)) stop(paste0(oriSC," cannot be found!"))
   }
   profile <- readRDS(strProfile)
-  X <- condensGene(read.table(strBulk,header=T,sep="\t",check.names=F,as.is=T,row.names=1),geneNameReady,ensemblV=ensemblV,ensemblPath=ensemblPath)
+  if(!is.null(cellCol)) profile$para$cellCol[names(cellCol)] <- cellCol
+  
+  X <- condensGene(read.table(strBulk,header=T,sep="\t",check.names=F,as.is=T),geneNameReady,ensemblV=ensemblV,ensemblPath=ensemblPath)#,row.names=1
   
   ## deconvolution --------
   strF <- paste0(strPrefix,"_CellMap_",profile$para$version,".pdf")
