@@ -15,7 +15,7 @@ oneSC <- function(strData,seqD=1e6){
   if(length(unique(cType[selType]))<2) return()
 
   ## remove MT genes and Ribosomal genes and miRNA----
-  X <- X[!grepl("^MT|^RP|^MIR",rownames(X)),]
+  X <- X[!grepl("^MT|^RP|^MIR",rownames(X)),order(colnames(X))]
   print(table(cType[selType]))
   return(X)
 }

@@ -8,7 +8,7 @@ require(ggplot2)
 require(ggrepel)
 require(plyr)
 
-plotEval <- function(estR,expR,cellCol,sID=F,pCH=NULL){
+plotEval <- function(estR,expR,cellCol,sID=F,pCH=NULL,rmseMax=0.5){
   if(sum(dim(estR)!=dim(expR))>0) stop("estR and expR are not matching dimension in plotEval")
   if(sum(rownames(estR)!=rownames(expR))>0 || sum(colnames(estR)!=colnames(expR))>0)
     stop("estR and expR are not matching names in plotEval")
@@ -19,16 +19,17 @@ plotEval <- function(estR,expR,cellCol,sID=F,pCH=NULL){
   D$sID <- as.factor(D$sID)
   D <- cbind(D,Expected=melt(as.matrix(expR))[,'value'])
   plotEvalOne(D,'cellType',cellCol)
-  plotRMSE(D,cellCol)
-  plotEvalSample(D,cellCol,1:9,ggtitle("top 9"))
-  plotEvalSample(D,cellCol,10:18,ggtitle("top 10~8"))
-  plotEvalSample(D,cellCol,19:27,ggtitle("top 19~27"))
+  rmse <- plotRMSE(D,cellCol,yMax=rmseMax)
+  #plotEvalSample(D,cellCol,1:9,ggtitle("top 9"))
+  #plotEvalSample(D,cellCol,10:18,ggtitle("top 10~8"))
+  #plotEvalSample(D,cellCol,19:27,ggtitle("top 19~27"))
   if(sID){
     D$dID <- sapply(strsplit(as.character(D$sID),"\\|"),head,1)
     plotEvalOne(D,'dID')
     for(i in unique(D$dID))
       plotEvalOne(D[D$dID==i,],'cellType',cellCol,ggtitle(i))
   }
+  return(rmse)
 }
 plotEvalOne <- function(D,colName,col=NULL,ggFun=NULL,facet=T,Plot=T){
   Dstat <- merge(ddply(D,colName,summarise,
@@ -42,7 +43,7 @@ plotEvalOne <- function(D,colName,col=NULL,ggFun=NULL,facet=T,Plot=T){
   p <- p+
     geom_smooth(method=lm,fill=NA)+
     geom_abline(intercept=0, slope=1, linetype='dashed', color='gray')+
-    theme_classic()+theme(aspect.ratio=1)
+    theme_classic(base_size=15)+theme(aspect.ratio=1)
   if(!is.null(col)) p <- p + scale_color_manual(values=col)
   if(!is.null(ggFun)) p <- p + ggFun
   if(Plot){
@@ -70,7 +71,7 @@ test <- function(rmse){
   return(0)
 }
 
-plotRMSE <- function(D,col,ggFun=NULL){
+plotRMSE <- function(D,col,ggFun=NULL,yMax=0.5){
   summaD <- ddply(D,'cellType',function(x)return(data.frame(rmse=sqrt(mean((x$Estimated-x$Expected)^2)))))
   tmp <- ddply(D,'sID',function(x)return(data.frame(rmse=sqrt(mean((x$Estimated-x$Expected)^2)))))
   tmp[,'sID'] <- 'samples'
@@ -88,13 +89,15 @@ plotRMSE <- function(D,col,ggFun=NULL){
     geom_errorbar(aes(ymin=mu,ymax=mu+sigma),width=0.3)+
     geom_point(aes(Obv,RMSE),data=summaD,position=position_jitterdodge(),pch=21,size=1)+
     #geom_dotplot(aes(Obv,RMSE),data=summaD,binaxis='y',stackdir="center",dotsize=0.1,color="gray50",fill="gray50")+
-    ylim(0,0.5)+
+    #ylim(0,yMax)+
+  	coord_cartesian(ylim=c(0, yMax))+
     scale_fill_manual(values=col)+
     ylab('RMSE')+xlab("")+
     theme_classic()+
     theme(axis.text.x = element_text(angle=90,hjust=1))
   if(!is.null(ggFun)) p <- p + ggFun
   print(p)
+  return(tmp)
 }
 
 plotEvalSample <- function(D,col,ix=1:9,ggFun=NULL){
