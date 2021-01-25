@@ -1,2 +1,0 @@
-GSE104276	profile/GSE104276.rds	Macrophage=Microglia;Astrocytes=Astrocytes;Oligodendrocytes=Oligodendrocytes;GABAergic=Neuron;Glutamatergic=Neuron
-GSE103723	profile/GSE103723.rds	Excitatory=Neuron;Inhibitory=Neuron;Astrocytes=Astrocytes;Oligodendrocytes=Oligodendrocytes;Microglia=Microglia

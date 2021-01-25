@@ -1,5 +1,0 @@
-	astro|GSM1901309|8yo_ctx	astro|GSM1901310|13yo_ctx	astro|GSM1901314|35yo_ctx	astro|GSM1901317|53yo_ctx	myeloid|GSM1901339|45yo_ctx	myeloid|GSM1901340|51yo_ctx	myeloid|GSM1901341|63_yo_ctx	oligo|GSM1901334|22yo_ctx	oligo|GSM1901335|63yo_ctx_A	oligo|GSM1901337|47yo_ctx	dopamine|GSM2027430|VTA	dopamine|GSM2027431|VTA	dopamine|GSM2027423|SNc	motor|88_Control_GSM1977034	motor|GSM2027414|spinal	motor|Spinal_motor_neuron_control_rep5_GSM3615504
-Astrocytes	1	1	1	1	0	0	0	0	0	0	0	0	0	0	0	0
-Microglia	0	0	0	0	1	1	1	0	0	0	0	0	0	0	0	0
-Oligodendrocytes	0	0	0	0	0	0	0	1	1	1	0	0	0	0	0	0
-Neuron	0	0	0	0	0	0	0	0	0	0	1	1	1	1	1	1
