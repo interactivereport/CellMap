@@ -33,7 +33,7 @@ if(T){
 	for(dID in strD){
 		for(dType in c("pure","mix")){
 			message("===============",dID," ",dType,"================")
-			bulk <- read.table(paste0(strPath,dID,".",dType,".txt"),header=T,row.names=1,sep="\t",as.is=T,check.names=F)
+			bulk <- readRDS(paste0(strPath,dID,".",dType,".rds"))
 			expR <- read.table(paste0(strPath,dID,".",dType,".rate"),header=T,row.names=1,sep="\t",as.is=T,check.names=F)
 			expR <- apply(expR,2,function(x)return(x/sum(x)))
 			rmse <- c()
