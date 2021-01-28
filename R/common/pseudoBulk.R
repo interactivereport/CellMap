@@ -87,7 +87,7 @@ onePure <-function(dID,sampleN,cellMap,seqD=2e6){
       colnames(one) <- base::sapply(strsplit(colnames(one),"\\|"),function(x){return(paste(c(j,x[-1],x[1]),collapse="|"))})
     }else{
       iPOS <- grep(j,cType)
-      ix <- rep(0,ceiling(length(iPOS)))
+      ix <- rep(0,ceiling(length(iPOS)*0.5))
       one <- c()
       for(k in 1:sampleN){
         ix <- sample(iPOS,length(ix),replace=T)
