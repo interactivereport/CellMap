@@ -8,6 +8,8 @@ Three main functions are provided within the R package:
   - cellmapTraining: Obtain the cell type profiles of your interests from multiple sc/sn RNAseq datasets by a training process;
   - cellmapOne: Estimate the cell type proportions of mixture bulk based on one reference sc/sn RNAseq dataset.
   
+**CellMap is intended to be used for research only and Biogen makes no representation or warranty as to the use or outcome of CellMap**
+
 # Installation
 ```
 
