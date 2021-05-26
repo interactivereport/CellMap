@@ -41,7 +41,7 @@ The manuscript folder contains the modifid version of [***MuSiC***](https://gith
 
 ### Figure 2
 
-![](manuscript/Fig/Fig2.pdf)
+![](manuscript/Fig/Fig2.png)
 
 
 
