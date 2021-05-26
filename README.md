@@ -46,5 +46,51 @@ The manuscript folder contains the modifid version of [***MuSiC***](https://gith
 
 ![](manuscript/Fig/Fig2.png)
 
+### Figure 3
+[script](manuscript/Fig/Fig3.R)  
+[pdf](manuscript/Fig/Fig3.pdf)  
+[png](manuscript/Fig/Fig3.png)  
+
+![](manuscript/Fig/Fig3.png)
+
+### profile heatmap
+[script](manuscript/Fig/Fig.profile.heatmap.R)  
+[pdf](manuscript/Fig/Fig3.profile.heatmap.pdf)  
+
+### Figure 4
+[script](manuscript/Fig/Fig4.R)  
+[pdf](manuscript/Fig/Fig4.pdf)  
+[png](manuscript/Fig/Fig4.png)  
+
+![](manuscript/Fig/Fig4.png)
+
+### Figure 5
+[script](manuscript/Fig/Fig5.R)  
+[pdf](manuscript/Fig/Fig5.pdf)  
+[png](manuscript/Fig/Fig5.png)  
+
+![](manuscript/Fig/Fig5.png)
+
+### Figure 6
+[script](manuscript/Fig/Fig6.R)  
+[pdf](manuscript/Fig/Fig6.pdf)  
+[png](manuscript/Fig/Fig6.png)  
+
+![](manuscript/Fig/Fig6.png)
+
+### Figure 7
+[script](manuscript/Fig/Fig7.R)  
+[pdf](manuscript/Fig/Fig7.pdf)  
+[png](manuscript/Fig/Fig7.png)  
+
+![](manuscript/Fig/Fig7.png)
+
+
+
+
+
+
+
+
 
 
