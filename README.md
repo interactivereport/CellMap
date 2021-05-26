@@ -37,6 +37,11 @@ cd CellMap
 # manuscript
 The manuscript folder contains the modifid version of [***MuSiC***](https://github.com/xuranw/MuSiC), [***SCDC***](https://github.com/meichendong/SCDC) and [***Bisque***](https://github.com/cozygene/bisque), to generate similar output format to the cellmap for comparison/evaluation purpose, as well as parallel implementation of those methods.
 
+## manuscript Figures
+
+### Figure 2
+
+![](manuscript/Fig/Fig2.pdf)
 
 
 
