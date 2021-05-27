@@ -85,7 +85,40 @@ The manuscript folder contains the modifid version of [***MuSiC***](https://gith
 
 ![](manuscript/Fig/Fig7.png)
 
+### Supplemental Figure 1
+[script](manuscript/Fig/S1.2.R)  
+[pdf](manuscript/Fig/Fig1.pdf)  
+[png](manuscript/Fig/Fig1.png)  
 
+![](manuscript/Fig/S1.png)
+
+### Supplemental Figure 2
+[script](manuscript/Fig/S1.2.R)  
+[pdf](manuscript/Fig/Fig2.pdf)  
+[png](manuscript/Fig/Fig2.png)  
+
+![](manuscript/Fig/S2.png)
+
+### Supplemental Figure 3
+[script](manuscript/Fig/S3.4.5.R)  
+[pdf](manuscript/Fig/S3.pdf)  
+[png](manuscript/Fig/S3.png)  
+
+![](manuscript/Fig/S3.png)
+
+### Supplemental Figure 4
+[script](manuscript/Fig/S3.4.5.R)  
+[pdf](manuscript/Fig/S4.pdf)  
+[png](manuscript/Fig/S4.png)  
+
+![](manuscript/Fig/S4.png)
+
+### Supplemental Figure 5
+[script](manuscript/Fig/S3.4.5.R)  
+[pdf](manuscript/Fig/S5.pdf)  
+[png](manuscript/Fig/S5.png)  
+
+![](manuscript/Fig/S5.png)
 
 
 
