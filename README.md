@@ -25,7 +25,7 @@ There are a few pre-build profiles:
   - Neuron3: Inhibitory, Excitatory, Nprogenitor
   - NGN2: iPSC, DAY3, DIV7, DIV7after
 
-Due to the file sizes, all profiles are not installed with the cellmap package. You can obtain those profiles by either directly download from the 'profiles' folder above or call following commands on linux (similar idea for Windows/Mac OS) after installed the cellmap R package:
+Due to the file sizes, all profiles are not installed with the CellMap R package. You can obtain those profiles by either directly downloading from the 'profiles' folder above or executing below commands on linux (the same for Windows/Mac OS) after installation of the CellMap R package:
 ```
 
 git clone https://github.com/interactivereport/CellMap.git
