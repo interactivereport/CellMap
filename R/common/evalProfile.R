@@ -43,6 +43,7 @@ evalProfile <- function(fProfile,para){
   }
 #  saveRDS(cbind(as.data.frame(t(apply(Res$composition,2,function(x){return(x/sum(x))})-tR)),Cor=coeff),
 #          file=paste(para$strfix,".eval.rds",sep=""))
+  message("Poor performance on cell types:",paste(poorCellType,collapse="; "))
   return(list(score=sqrt(sum(rmse^2)*sum(rmse>para$rmseCutoff)),
               poorCellType=unique(poorCellType),
               rmSetsIndex=unique(rmSetsIndex)))

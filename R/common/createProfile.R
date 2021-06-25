@@ -55,6 +55,14 @@ initProfile <- function(para){
       ix <- resCPM$pheno$cType==i
       rmBatchD[,ix] <- batchRM(resCPM$logCPM[,ix],"cData",resCPM$pheno[ix,])
     }
+  }else if(para$batchMethod=="combat_seq"){
+      cat("create Profile: removing the batch effects by combat_seq\n")
+      resPure$express <- batchRM(resPure$express,"cData",resCPM$pheno,method="combat_seq")
+      resCPM <- pseudoLogCPM(resPure$express,para$normDepth,
+                             cutoffCPM=para$geneCutoffCPM,
+                             cutoffRatio=para$geneCutoffDetectionRatio)
+      rmBatchD <- resCPM$logCPM
+      resCPM$pheno <- resCPM$pheno[,colnames(resCPM$pheno)!="cData",drop=F]
   }else{
     stop("UNKNOWN model type:",para$batchMethod,"!\n")
   }

@@ -6,8 +6,8 @@
 pseudoPure <- function(accIDs,sN,cellMap,seqD,gCover=0.6){
   
   if(is.null(names(accIDs))) names(accIDs) <- gsub("\\.rds","",basename(accIDs))
-  res <- BiocParallel::bplapply(accIDs,onePure,sN,cellMap,seqD)
-  
+  res <- BiocParallel::bplapply(setNames(names(accIDs),names(accIDs)),onePure,sN,cellMap,accIDs,seqD)
+
   ## filtering genes not common accross datasets for each cell types
   resType <- base::lapply(names(res),function(x)return(unique(base::sapply(strsplit(colnames(res[[x]]),"\\|"),head,1))))
   resGenes <- base::lapply(names(res),function(x)return(rownames(res[[x]])))
@@ -18,7 +18,7 @@ pseudoPure <- function(accIDs,sN,cellMap,seqD,gCover=0.6){
   })
   gNames <- unique(unlist(gNames))
   message("gName in pseudoPure:",length(gNames))
-  
+
   bulk <- c()
   genes <- list()
   for(i in names(accIDs)){
@@ -59,15 +59,16 @@ pseudoLogCPM <- function(X,normDep=1e6,grp=NULL,cutoffCPM=8,cutoffRatio=0.6){
 
 #names of cellMap is the ones in the data, the value is the one used for doconvolution
 pseudoMix <- function(accIDs,sN,cellMap,seqDep){ 
+  if(is.null(names(accIDs))) names(accIDs) <- gsub("\\.rds","",basename(accIDs))
   mixR <- bulk <- list()
-  res <- BiocParallel::bplapply(accIDs,oneMix,sN,cellMap,seqDep)
+  res <- BiocParallel::bplapply(setNames(names(accIDs),names(accIDs)),oneMix,sN,cellMap,accIDs,seqDep)
   res[base::sapply(res,is.null)] <- NULL
   return(res)
 }
 
-onePure <-function(dID,sampleN,cellMap,seqD=2e6){
-  strData <- dID#paste("Data/",dID,".rds",sep="")
-  dID <- gsub("\\.rds","",basename(dID))
+onePure <-function(dID,sampleN,cellMap,accPaths,seqD=2e6){
+  strData <- accPaths[dID]#paste("Data/",dID,".rds",sep="")
+  #dID <- gsub("\\.rds","",basename(dID))
   if(!file.exists(strData)){
     cat("Missing",strData,"\n")
     return()
@@ -128,9 +129,9 @@ extCellIndex <- function(nCell,cType){
   ## ----
   return(ix)
 }
-oneMix <- function(dID,sampleN,cellMap,seqD=2e6){
-  strData <- dID#paste("Data/",dID,".rds",sep="")
-  dID <- gsub("\\.rds","",basename(dID))
+oneMix <- function(dID,sampleN,cellMap,accPaths,seqD=2e6){
+  strData <- accPaths[dID]#paste("Data/",dID,".rds",sep="")
+  #dID <- gsub("\\.rds","",basename(dID))
   if(!file.exists(strData)){
     cat("Missing",strData,"\n")
     return()

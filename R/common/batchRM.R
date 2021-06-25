@@ -1,12 +1,12 @@
 ###########
 ## batchRM.R
 ##
-## CPM[features,samples]: log2 normalized features
+## X[features,samples]: log2 normalized features for ComBat, counts for ComBat_seq
 ## batch: the column name in pheno indicates the batch
-## pheno: a data frame whose row number is the same as column number of CPM, columns are interested phenotype information
+## pheno: a data frame whose row number is the same as column number of X, columns are interested phenotype information
 #############
 
-batchRM <- function(CPM,batch,pheno,additional=NULL,method="combat",core=8){
+batchRM <- function(X,batch,pheno,additional=NULL,method="combat",core=8){
   if(sum(colnames(pheno)%in%batch)!=1){
     print(batch)
     print(colnames(pheno))
@@ -15,10 +15,12 @@ batchRM <- function(CPM,batch,pheno,additional=NULL,method="combat",core=8){
   
   if(method=="combat"){
     if(is.null(additional)){
-      combatD <- batchComBat(CPM,as.character(pheno[,batch]),core=core)
+      combatD <- batchComBat(X,as.character(pheno[,batch]),core=core)
     }else{
-      combatD <- batchComBat(CPM,pheno[,batch],pheno[,additional,drop=F],core=core)
+      combatD <- batchComBat(X,pheno[,batch],pheno[,additional,drop=F],core=core)
     }
+  }else if(method=='combat_seq'){
+      combatD <- batchComBat_seq(X,pheno[,batch])
   }else{
     stop("Unknown normalization method:",method)
   }
@@ -42,5 +44,15 @@ batchComBat <- function(eData,batch,pheno=NULL,core=8){
   return(eData)
 }
 
-
+batchComBat_seq <- function(eCounts,batch){
+    message("Starting ComBat_seq ...")
+    print(table(batch))
+    if(length(table(batch))<2) return(eCounts)
+    ## genes should be expressed in 80% of samples of any batch
+    selX <- apply(eCounts,1,function(x){return(sum(x>1))})>=0.8 * min(table(batch))
+    combatD <- sva::ComBat_seq(counts=as.matrix(eCounts[selX,]),batch=batch)
+    combatD[combatD<0] <- 0
+    cat("Finishing ComBat:",range(combatD),"and demision:",dim(combatD),"\n")
+    return(combatD)
+}
 
