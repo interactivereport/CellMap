@@ -2,8 +2,8 @@
 ## evalProfile.R
 ##
 ###############################
-source("common.deconv.R")
-source("common.condensGene.R")
+#source("common.deconv.R")
+#source("common.condensGene.R")
 
 evalProfile <- function(fProfile,para){
   ## deconvolution and plot-----

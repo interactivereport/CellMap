@@ -32,7 +32,7 @@ cellmapTraining(
   rmseCutoff = 0.1,
   tailR = 0.8,
   maxRMrate = 0.75,
-  maxIteration = 10,
+  maxIteration = 30,
   core = 2
 )
 }
