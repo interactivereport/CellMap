@@ -1,8 +1,5 @@
-##########################
-## deconv.R
-##
-##########################
-
+#'  deconv.R
+#'  @noRd
 deconv <- function(bulk,feature,perm=100,batch=NULL,rmCellType=NULL,modelForm='log2'){
   if(!is.null(rmCellType)){
     feature$sets <- feature$sets[,!sapply(strsplit(feature$sets[1,],"\\|"),head,1)%in%rmCellType]
