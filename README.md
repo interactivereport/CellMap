@@ -20,6 +20,7 @@ devtools::install_github('interactivereport/CellMap')
 
 # Usage
 **cellmap::cellmap**
+This function estimates cell type proportions of mixture bulk RNA samples based on pre-trained cell type profiles.
 ```
 > ?cellmap::cellmap
 cellmap(
@@ -64,8 +65,26 @@ Default is **Data** in the current working directory.
 - core: The number of computation nodes could be used. Default is 2.
 - bCutoff: A numeric indicate the significant level. Default is 0.05.
 
+*Return*
+If ```bReturn``` is set to be ```TRUE```, a named list object with detailed decomposition results is returned.
+The following objects are in the list, and they can be accessed by ($) of the returned list object:
+- ```compoP``` A matrix of the raw fitting coefficient for each sample (column) and each cell type (row).
+It needed to normalize the sum of each column to be 1, in order to martch the output compisition table.
+- ```compoP``` A matrix of the fitting p-values for each sample (column) and each cell type (row).
+- ```overallP``` A vector of the overall fitting p-value for each sample.
+- ```rmse``` A vector of the fitting RMSE for each sample.
+- ```coverR``` A numeric indicate the ratio of cell type signature genes covered in the mixture bulk expression data
+- ```rawComp``` A named list of all raw composition matrix, p-values, RMSE for each sample.
+- ```rawSets``` A matrix of all sets of pure cell type combinations.
+- ```missingF``` A vector of cell type signature genes which are not in the query bulk expresion data.
+- ```missingByCellType``` A named list of cell type signature genes which are not in the query bulk expresion data for each cell type.
 
-
+*examples*
+```
+strMix <- system.file("extdata","bulk.txt",package="cellmap")
+strProfile <- system.file("extdata","CNS6.rds",package="cellmap")
+cellmap(strMix,strProfile,strPrefix="~/cellmap_CNS6_test")
+```
 
 
 
@@ -74,34 +93,6 @@ Default is **Data** in the current working directory.
 > ?cellmap::cellmapOne
 ```
 
-}
-
-}
-\value{
-If \code{bReturn} is set to be \code{TRUE}, a named list object with detailed decomposition results is returned.
-The following objects are in the list, and they can be accessed by ($) of the returned list object:
-\itemize{
-\item \code{compoP} A matrix of the raw fitting coefficient for each sample (column) and each cell type (row).
-It needed to normalize the sum of each column to be 1, in order to martch the output compisition table.
-\item \code{compoP} A matrix of the fitting p-values for each sample (column) and each cell type (row).
-\item \code{overallP} A vector of the overall fitting p-value for each sample.
-\item \code{rmse} A vector of the fitting RMSE for each sample.
-\item \code{coverR} A numeric indicate the ratio of cell type signature genes covered in the mixture bulk expression data
-\item \code{rawComp} A named list of all raw composition matrix, p-values, RMSE for each sample.
-\item \code{rawSets} A matrix of all sets of pure cell type combinations.
-\item \code{missingF} A vector of cell type signature genes which are not in the query bulk expresion data.
-\item \code{missingByCellType} A named list of cell type signature genes which are not in the query bulk expresion data for each cell type.
-}
-}
-\description{
-This function estimates cell type proportions of mixture bulk RNA samples based on pre-trained cell type profiles.
-}
-\examples{
-strMix <- system.file("extdata","bulk.txt",package="cellmap")
-strProfile <- system.file("extdata","CNS6.rds",package="cellmap")
-cellmap(strMix,strProfile,strPrefix="~/cellmap_CNS6_test")
-
-}
 
 
 # Pre-build profiles
