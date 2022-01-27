@@ -20,8 +20,7 @@ devtools::install_github('interactivereport/CellMap')
 
 # Usage
 ```
->help('cellmap')
-```
+> help('cellmap')
 \name{cellmap}
 \alias{cellmap}
 \title{Estimate the cell type proportions of mixture bulk RNA}
@@ -102,6 +101,7 @@ strProfile <- system.file("extdata","CNS6.rds",package="cellmap")
 cellmap(strMix,strProfile,strPrefix="~/cellmap_CNS6_test")
 
 }
+```
 
 
 # Pre-build profiles
