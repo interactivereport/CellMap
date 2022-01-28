@@ -238,7 +238,7 @@ cellmapTraining(strData,strPrefix="~/cellmap_profile",cellTypeMap,core=16)
 ```
 
 # Running time
-The running time for deconvolute 220 *pure* samples (single cell type) and 80 *mix* samples on a 32 core cluster is demonstrated below. It only tooks around 3 minutes for 80 samples, while 7 minutes for 220 samples based on Major9 profiles. And it costs ~24 hours to generated the Major9 profiles from 17 datasets. The running time depends on the numbers of datasets, cell types, bulk samples.
+The running time for deconvolute 220 *pure* samples (single cell type) and 80 *mix* samples on a 32 core cluster is demonstrated below. It only tooks around 15 seconds for 80 samples, while 34 secondes for 220 samples based on Major9 profiles. And it costs about 24 hours to generated the Major9 profiles from 17 datasets. The running time depends on the numbers of datasets, cell types, bulk samples.
 ![](manuscript/Fig/runT.png)
 
 # Pre-build profiles
