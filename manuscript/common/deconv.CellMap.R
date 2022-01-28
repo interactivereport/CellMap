@@ -100,23 +100,8 @@ deconv.CellMap <- function(bulk,feature,perm=100,modelForm="log2",rmCellType=NUL
       ## initialize the return
       prop <- setNames(fit$x,cName)
       pV <- setNames(rep(0.0499,length(cName)),cName)
-      fitP <- 1
-      yhat <- M %*% as.matrix(fit$x)
-      rmse <- sqrt(sum((y-yhat)^2)/length(y))
-      ##
-      Init <- setNames(fit$x,paste("b",1:ncol(M),sep=""))
-      formu <- paste("bulk~",paste(paste(names(Init),"*",cName,sep=""),collapse="+"),sep="")
-      Data <- as.data.frame(cbind(M,y))
-      colnames(Data) <- c(cName,"bulk")
-      fitR <- try(nls(as.formula(formu),Data,Init,algorithm="port",lower=rep(0,length(Init))),silent=T)
-      if("convergence"%in%names(fitR)){
-        a <- summary(fitR)
-        prop[] <- a$coefficients[,"Estimate"]
-        pV[] <- a$coefficients[,"Pr(>|t|)"]
-        yhat <- predict(fitR)
-        fitP <- cor.test(yhat,y)$p.value
-        rmse <- sqrt(sum((y-yhat)^2)/length(y))
-      }
+      fitP <- F.pvalue(y,fit$residuals,ncol(M))
+      rmse <- sqrt(sum(fit$residuals^2)/length(y))
       return(list(prop=prop,pV=pV,fitP=fitP,rmse=rmse))
     },x)
     return(list(prop=sapply(one,function(x){return(x$prop)}),
@@ -126,14 +111,24 @@ deconv.CellMap <- function(bulk,feature,perm=100,modelForm="log2",rmCellType=NUL
   })#,BPPARAM=MulticoreParam(tasks=1)
   ## combin the results and prepair the reture --------
   topN <- 5
-  finalProp <- base::sapply(FullProp,function(one){
-    ix <- order(one$rmse)[1:topN]
-    w <- median(one$rmse,na.rm=T) - one$rmse[ix]
-    w <- w/sum(w)
-    return(list(prop=(one$prop[,ix]%*%as.matrix(w))[,1],
-                pV=(10^-(-log10(one$pV[,ix])%*%as.matrix(w)))[,1],
-                fitP=10^-sum(-log10(one$fitP[ix])%*%w),
-                rmse=sum(one$rmse[ix]*w)))
+  finalProp <- base::sapply(names(FullProp),function(one){
+      ix <- order(FullProp[[one]]$rmse)[1:topN]
+      for(i in ix){
+          res <- NLSfit(features[,selSets[i,]],bulk[,one],
+                        FullProp[[one]]$prop[,i])
+          if(!is.null(res)){
+              FullProp[[one]]$prop[,i] <- res$prop
+              FullProp[[one]]$pV[,i] <- res$pV
+              FullProp[[one]]$rmse[i] <- res$rmse
+              FullProp[[one]]$fitP[i] <- res$fitP
+          }
+      }
+      w <- median(FullProp[[one]]$rmse,na.rm=T) - FullProp[[one]]$rmse[ix]
+      w <- w/sum(w)
+      return(list(prop=(FullProp[[one]]$prop[,ix]%*%as.matrix(w))[,1],
+                  pV=(10^-(-log10(FullProp[[one]]$pV[,ix])%*%as.matrix(w)))[,1],
+                  fitP=10^-sum(-log10(FullProp[[one]]$fitP[ix])%*%w),
+                  rmse=sum(FullProp[[one]]$rmse[ix]*w)))
   })
   
   selx <- unique(unlist(base::sapply(FullProp,function(one)return(order(one$rmse)[1:topN]))))
@@ -150,6 +145,34 @@ deconv.CellMap <- function(bulk,feature,perm=100,modelForm="log2",rmCellType=NUL
               heatData=heatData))
 }
 
+NLSfit <- function(M,y,x){
+    cName <- names(x)
+    Init <- setNames(x,paste("b",1:ncol(M),sep=""))
+    formu <- paste("bulk~",paste(paste(names(Init),"*",cName,sep=""),collapse="+"),sep="")
+    Data <- as.data.frame(cbind(M,y))
+    colnames(Data) <- c(cName,"bulk")
+    
+    fitR <- try(nls(as.formula(formu),Data,Init,algorithm="port",lower=rep(0,length(Init))),silent=T)
+    res <- NULL
+    if("convergence"%in%names(fitR)){
+        a <- summary(fitR)
+        res <- list()
+        res$prop <- setNames(a$coefficients[,"Estimate"],cName)
+        res$pV <- setNames(a$coefficients[,"Pr(>|t|)"],cName)
+        res$rmse <- sqrt(sum(a$residuals^2)/length(y))
+        res$fitP <- F.pvalue(y,a$residuals,ncol(M))
+    }
+    return(res)
+}
+
+F.pvalue <- function(y,resid,df2){
+    df1 <- 1
+    n <- length(y)
+    RSS1 <- sum((y-mean(y))^2)
+    RSS2 <- sum(resid^2)
+    fstat <- ((RSS1-RSS2)/(df2-df1))/(RSS2/(n-df2))
+    return(pf(fstat,df1,df2,lower.tail=F))
+}
 
 
 
