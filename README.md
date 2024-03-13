@@ -9,7 +9,8 @@ Three main functions are provided within the R package:
   - cellmapOne: Estimate the cell type proportions of mixture bulk based on one reference sc/sn RNAseq dataset.
   
 **CellMap is intended to be used for research only and Biogen makes no representation or warranty as to the use or outcome of CellMap**
-**Citation: Ouyang, Z., Bourgeois-Tchir, N., Lyashenko, E. et al. Characterizing the composition of iPSC derived cells from bulk transcriptomics data with CellMap. Sci Rep 12, 17394 (2022). https://doi.org/10.1038/s41598-022-22115-1**
+
+**Ouyang, Z., Bourgeois-Tchir, N., Lyashenko, E. et al. Characterizing the composition of iPSC derived cells from bulk transcriptomics data with CellMap. Sci Rep 12, 17394 (2022). https://doi.org/10.1038/s41598-022-22115-1**
 
 # Installation
 ```
